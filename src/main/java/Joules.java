@@ -37,9 +37,25 @@ public class Joules {
                     System.out.println("   " + task);
                 }
             } else {
-                history[index] = new Task(input);
+                Task t;
+                String[] split;
+                if (commands[0].equals("todo")) {
+                    split = input.split("todo ");
+                    t = new Todo(split[1]);
+                } else if (commands[0].equals("deadline")) {
+                    split = input.split("deadline |/by ");
+                    t = new Deadline(split[1].trim(), split[2]);
+                } else if (commands[0].equals("event")) {
+                    split = input.split("event |/from |/to ");
+                    t = new Event(split[1].trim(), split[2].trim(), split[3]);
+                } else {
+                    t = new Task(input);
+                }
+                history[index] = t;
                 index += 1;
-                System.out.println(" added: " + input);
+                System.out.println(" Added this task:");
+                System.out.println("   " + t);
+                System.out.println(" You now have " + index + " task(s)");
             }
         }
     }
