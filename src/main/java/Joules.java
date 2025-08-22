@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -7,7 +8,7 @@ public class Joules {
                 " What can I do for you?");
 
         // Store input
-        Task[] history = new Task[100];
+        ArrayList<Task> history = new ArrayList<>(100);
         int index = 0;
 
         // Accept user input
@@ -22,23 +23,29 @@ public class Joules {
             } else if (input.equals("list")) {
                 System.out.println(" You got this! These are your tasks:");
                 for (int i = 0; i < index; i++) {
-                    System.out.printf(" %d.%s%n", i + 1, history[i]);
+                    System.out.printf(" %d.%s%n", i + 1, history.get(i));
                 }
-            } else if (commands.length == 2 && Set.of("mark", "unmark").contains(commands[0])){
+            } else if (commands.length == 2 && Set.of("mark", "unmark", "delete").contains(commands[0])){
                 try {
                     int taskNum = Integer.parseInt(commands[1]);
                     if (taskNum > index) {
                         throw new JoulesException(" There are only " + index + " tasks!");
                     }
-                    Task task = history[taskNum - 1];
+                    Task task = history.get(taskNum - 1);
                     if (commands[0].equals("mark")) {
                         task.mark();
                         System.out.println(" Keep up the good work! I've marked this task as done:");
                         System.out.println("   " + task);
-                    } else {
+                    } else if (commands[0].equals("unmark")) {
                         task.unmark();
                         System.out.println(" Okay, I've marked this task as not done yet::");
                         System.out.println("   " + task);
+                    } else {
+                        // delete
+                        history.remove(taskNum - 1);
+                        System.out.println("Okay, I've removed this task:");
+                        System.out.println("   " + task);
+                        index -= 1;
                     }
                 } catch (NumberFormatException e) {
                     System.out.println(" Please enter a valid task number!");
@@ -76,7 +83,7 @@ public class Joules {
                     } else {
                         throw new JoulesException(" Sorry, I do not understand :<");
                     }
-                    history[index] = t;
+                    history.add(t);
                     index += 1;
                     System.out.println(" Added this task:");
                     System.out.println("   " + t);
