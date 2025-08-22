@@ -1,4 +1,3 @@
-import java.util.Arrays;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -26,36 +25,65 @@ public class Joules {
                     System.out.printf(" %d.%s%n", i + 1, history[i]);
                 }
             } else if (commands.length == 2 && Set.of("mark", "unmark").contains(commands[0])){
-                Task task = history[Integer.parseInt(commands[1]) - 1];
-                if (commands[0].equals("mark")) {
-                    task.mark();
-                    System.out.println(" Keep up the good work! I've marked this task as done:");
-                    System.out.println("   " + task);
-                } else {
-                    task.unmark();
-                    System.out.println(" Okay, I've marked this task as not done yet::");
-                    System.out.println("   " + task);
+                try {
+                    int taskNum = Integer.parseInt(commands[1]);
+                    if (taskNum > index) {
+                        throw new JoulesException(" There are only " + index + " tasks!");
+                    }
+                    Task task = history[taskNum - 1];
+                    if (commands[0].equals("mark")) {
+                        task.mark();
+                        System.out.println(" Keep up the good work! I've marked this task as done:");
+                        System.out.println("   " + task);
+                    } else {
+                        task.unmark();
+                        System.out.println(" Okay, I've marked this task as not done yet::");
+                        System.out.println("   " + task);
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println(" Please enter a valid task number!");
+                } catch (JoulesException e) {
+                    System.out.println(e.getMessage());
                 }
             } else {
                 Task t;
                 String[] split;
-                if (commands[0].equals("todo")) {
-                    split = input.split("todo ");
-                    t = new Todo(split[1]);
-                } else if (commands[0].equals("deadline")) {
-                    split = input.split("deadline |/by ");
-                    t = new Deadline(split[1].trim(), split[2]);
-                } else if (commands[0].equals("event")) {
-                    split = input.split("event |/from |/to ");
-                    t = new Event(split[1].trim(), split[2].trim(), split[3]);
-                } else {
-                    t = new Task(input);
+                try {
+                    if (commands[0].equals("todo")) {
+                        split = input.split("todo ");
+                        if (split.length == 1 || split[1].trim().isEmpty()) {
+                            throw new JoulesException(" Please add a description about what the todo is!");
+                        }
+                        t = new Todo(split[1]);
+                    } else if (commands[0].equals("deadline")) {
+                        split = input.split("deadline |/by ");
+                        if (split.length == 1 || split[1].trim().isEmpty()) {
+                            throw new JoulesException(" Please add a description about what the deadline is!");
+                        }
+                        if (split.length == 2 || split[2].trim().isEmpty()) {
+                            throw new JoulesException(" Please add a deadline with /by!");
+                        }
+                        t = new Deadline(split[1].trim(), split[2]);
+                    } else if (commands[0].equals("event")) {
+                        split = input.split("event |/from |/to ");
+                        if (split.length == 1 || split[1].trim().isEmpty()) {
+                            throw new JoulesException(" Please add a description about what the event is!");
+                        }
+                        if (split.length <= 3 || split[2].trim().isEmpty() || split[3].trim().isEmpty()) {
+                            throw new JoulesException(" Please ensure you have a /from and /to date or time!");
+                        }
+                        t = new Event(split[1].trim(), split[2].trim(), split[3]);
+                    } else {
+                        throw new JoulesException(" Sorry, I do not understand :<");
+                    }
+                    history[index] = t;
+                    index += 1;
+                    System.out.println(" Added this task:");
+                    System.out.println("   " + t);
+                    System.out.println(" You now have " + index + " task(s)");
+                } catch (JoulesException e) {
+                    System.out.println(e.getMessage());
                 }
-                history[index] = t;
-                index += 1;
-                System.out.println(" Added this task:");
-                System.out.println("   " + t);
-                System.out.println(" You now have " + index + " task(s)");
             }
         }
     }
