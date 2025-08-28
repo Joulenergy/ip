@@ -1,3 +1,7 @@
+package joules.task;
+
+import joules.Store;
+
 public class Todo extends Task {
 
     public Todo(String description) {

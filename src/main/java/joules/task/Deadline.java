@@ -1,3 +1,7 @@
+package joules.task;
+
+import joules.Store;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
