@@ -78,7 +78,7 @@ public class Joules {
                             LocalDate date = LocalDate.parse(split[2]);
                             t = new Deadline(split[1].trim(), date);
                         } catch (DateTimeParseException e) {
-                            throw new JoulesException(" Invalid date format or value: " + e.getMessage());
+                            throw new JoulesException(" Invalid date format or value, use yyyy-MM-dd ");
                         }
                     } else if (commands[0].equals("event")) {
                         split = input.split("event |/from |/to ");
@@ -88,7 +88,13 @@ public class Joules {
                         if (split.length <= 3 || split[2].trim().isEmpty() || split[3].trim().isEmpty()) {
                             throw new JoulesException(" Please ensure you have a /from and /to date or time!");
                         }
-                        t = new Event(split[1].trim(), split[2].trim(), split[3]);
+                        try {
+                            LocalDate fromDate = LocalDate.parse(split[2].trim());
+                            LocalDate toDate = LocalDate.parse(split[3]);
+                            t = new Event(split[1].trim(), fromDate, toDate);
+                        } catch (DateTimeParseException e) {
+                            throw new JoulesException(" Invalid date format or value, use yyyy-MM-dd ");
+                        }
                     } else {
                         throw new JoulesException(" Sorry, I do not understand :<");
                     }

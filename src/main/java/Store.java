@@ -28,7 +28,7 @@ public class Store {
                     t = new Deadline(taskDetails[2], LocalDate.parse(taskDetails[3]));
                     break;
                 case "E":
-                    t = new Event(taskDetails[2], taskDetails[3], taskDetails[4]);
+                    t = new Event(taskDetails[2], LocalDate.parse(taskDetails[3]), LocalDate.parse(taskDetails[4]));
                     break;
                 default:
                     System.out.println("Unable to load unknown task type: " + line);
