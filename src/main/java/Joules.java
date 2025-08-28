@@ -34,10 +34,12 @@ public class Joules {
                     Task task = history.get(taskNum - 1);
                     if (commands[0].equals("mark")) {
                         task.mark();
+                        Store.saveAll(history);
                         System.out.println(" Keep up the good work! I've marked this task as done:");
                         System.out.println("   " + task);
                     } else if (commands[0].equals("unmark")) {
                         task.unmark();
+                        Store.saveAll(history);
                         System.out.println(" Okay, I've marked this task as not done yet::");
                         System.out.println("   " + task);
                     } else {

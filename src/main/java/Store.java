@@ -53,4 +53,18 @@ public class Store {
             System.out.println(e.getMessage());
         }
     }
+
+    public static void saveAll(ArrayList<Task> tasks) {
+        try {
+            // clear the file
+            FileWriter fw = new FileWriter(Store.PATH);
+            fw.close();
+
+            for (Task task : tasks) {
+                task.store();
+            }
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+    }
 }
