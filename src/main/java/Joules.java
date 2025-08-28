@@ -1,6 +1,9 @@
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Set;
+
+import java.time.LocalDate;
 
 public class Joules {
     public static void main(String[] args) {
@@ -71,7 +74,12 @@ public class Joules {
                         if (split.length == 2 || split[2].trim().isEmpty()) {
                             throw new JoulesException(" Please add a deadline with /by!");
                         }
-                        t = new Deadline(split[1].trim(), split[2]);
+                        try {
+                            LocalDate date = LocalDate.parse(split[2]);
+                            t = new Deadline(split[1].trim(), date);
+                        } catch (DateTimeParseException e) {
+                            throw new JoulesException(" Invalid date format or value, use yyyy-MM-dd ");
+                        }
                     } else if (commands[0].equals("event")) {
                         split = input.split("event |/from |/to ");
                         if (split.length == 1 || split[1].trim().isEmpty()) {
@@ -80,7 +88,13 @@ public class Joules {
                         if (split.length <= 3 || split[2].trim().isEmpty() || split[3].trim().isEmpty()) {
                             throw new JoulesException(" Please ensure you have a /from and /to date or time!");
                         }
-                        t = new Event(split[1].trim(), split[2].trim(), split[3]);
+                        try {
+                            LocalDate fromDate = LocalDate.parse(split[2].trim());
+                            LocalDate toDate = LocalDate.parse(split[3]);
+                            t = new Event(split[1].trim(), fromDate, toDate);
+                        } catch (DateTimeParseException e) {
+                            throw new JoulesException(" Invalid date format or value, use yyyy-MM-dd ");
+                        }
                     } else {
                         throw new JoulesException(" Sorry, I do not understand :<");
                     }
