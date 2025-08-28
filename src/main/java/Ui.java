@@ -1,6 +1,3 @@
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-
 public class Ui {
     public void showWelcome() {
         System.out.println(" Hello! I'm Joules!");
@@ -33,10 +30,10 @@ public class Ui {
         System.out.println(" Hope to see you again soon!");
     }
 
-    public void listTasks(ArrayList<Task> tasks) {
+    public void listTasks(TaskList tasks) {
         System.out.println(" You got this! These are your tasks:");
-        for (int i = 0; i < tasks.size(); i++) {
-            System.out.printf(" %d.%s%n", i + 1, tasks.get(i));
+        for (int i = 1; i <= tasks.taskCount(); i++) {
+            System.out.printf(" %d.%s%n", i + 1, tasks.getTask(i));
         }
     }
 
@@ -46,7 +43,7 @@ public class Ui {
     }
 
     public void unMarkTask(Task t) {
-        System.out.println(" Okay, I've marked this task as not done yet::");
+        System.out.println(" Okay, I've marked this task as not done yet:");
         System.out.println("   " + t);
     }
 

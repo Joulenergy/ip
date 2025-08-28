@@ -8,7 +8,7 @@ import java.time.LocalDate;
 public class Store {
     private static final String PATH = "/store/tasks.txt";
 
-    public static void loadTasks(ArrayList<Task> tasks) {
+    public static void loadTasks(TaskList tasks) {
         File f = new File(Store.PATH);
         try {
             if (!f.exists()) {
@@ -37,7 +37,7 @@ public class Store {
                     if (taskDetails[1].equals("1")) {
                         t.mark();
                     }
-                    tasks.add(t);
+                    tasks.addTask(t);
                 }
             }
         } catch (IOException | SecurityException e) {
@@ -55,14 +55,13 @@ public class Store {
         }
     }
 
-    public static void saveAll(ArrayList<Task> tasks) {
+    public static void saveAll(TaskList tasks) {
         try {
             // clear the file
             FileWriter fw = new FileWriter(Store.PATH);
             fw.close();
-
-            for (Task task : tasks) {
-                task.store();
+            for (int i = 1; i <= tasks.taskCount(); i++) {
+                tasks.getTask(i).store();
             }
         } catch (IOException e) {
             System.out.println(e.getMessage());

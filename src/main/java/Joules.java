@@ -8,12 +8,12 @@ import java.time.LocalDate;
 public class Joules {
 
     private static final Ui UI = new Ui();
+    private static final TaskList history = new TaskList(100);
 
     public static void main(String[] args) {
         UI.showWelcome();
 
         // Load input
-        ArrayList<Task> history = new ArrayList<>(100);
         Store.loadTasks(history);
 
         // Accept user input
@@ -30,10 +30,10 @@ public class Joules {
             } else if (commands.length == 2 && Set.of("mark", "unmark", "delete").contains(commands[0])){
                 try {
                     int taskNum = Integer.parseInt(commands[1]);
-                    if (taskNum > history.size()) {
-                        throw new JoulesException(" There are only " + history.size() + " tasks!");
+                    if (taskNum > history.taskCount()) {
+                        throw new JoulesException(" There are only " + history.taskCount() + " tasks!");
                     }
-                    Task task = history.get(taskNum - 1);
+                    Task task = history.getTask(taskNum);
                     if (commands[0].equals("mark")) {
                         task.mark();
                         Store.saveAll(history);
@@ -44,7 +44,7 @@ public class Joules {
                         UI.unMarkTask(task);
                     } else {
                         // delete
-                        history.remove(taskNum - 1);
+                        history.removeTask(taskNum);
                         UI.deleteTask(task);
                     }
                 } catch (NumberFormatException e) {
@@ -94,9 +94,9 @@ public class Joules {
                     } else {
                         throw new JoulesException(" Sorry, I do not understand ;<");
                     }
-                    history.add(t);
+                    history.addTask(t);
                     t.store();
-                    UI.addTask(t, history.size());
+                    UI.addTask(t, history.taskCount());
                 } catch (JoulesException e) {
                     UI.showError(e.getMessage());
                 }
