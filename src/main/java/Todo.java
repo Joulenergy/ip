@@ -8,4 +8,10 @@ public class Todo extends Task {
     public String toString() {
         return "[T]" + super.toString();
     }
+
+    @Override
+    public void store() {
+        String storeString = "T | " + super.storeString();
+        Store.storeTask(storeString);
+    }
 }

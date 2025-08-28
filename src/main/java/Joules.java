@@ -7,9 +7,9 @@ public class Joules {
         System.out.println(" Hello! I'm Joules!\n" +
                 " What can I do for you?");
 
-        // Store input
+        // Load input
         ArrayList<Task> history = new ArrayList<>(100);
-        int index = 0;
+        Store.loadTasks(history);
 
         // Accept user input
         Scanner scanner = new Scanner(System.in);
@@ -22,14 +22,14 @@ public class Joules {
                 System.out.println(" Bye. Hope to see you again soon!");
             } else if (input.equals("list")) {
                 System.out.println(" You got this! These are your tasks:");
-                for (int i = 0; i < index; i++) {
+                for (int i = 0; i < history.size(); i++) {
                     System.out.printf(" %d.%s%n", i + 1, history.get(i));
                 }
             } else if (commands.length == 2 && Set.of("mark", "unmark", "delete").contains(commands[0])){
                 try {
                     int taskNum = Integer.parseInt(commands[1]);
-                    if (taskNum > index) {
-                        throw new JoulesException(" There are only " + index + " tasks!");
+                    if (taskNum > history.size()) {
+                        throw new JoulesException(" There are only " + history.size() + " tasks!");
                     }
                     Task task = history.get(taskNum - 1);
                     if (commands[0].equals("mark")) {
@@ -45,7 +45,6 @@ public class Joules {
                         history.remove(taskNum - 1);
                         System.out.println("Okay, I've removed this task:");
                         System.out.println("   " + task);
-                        index -= 1;
                     }
                 } catch (NumberFormatException e) {
                     System.out.println(" Please enter a valid task number!");
@@ -84,10 +83,10 @@ public class Joules {
                         throw new JoulesException(" Sorry, I do not understand :<");
                     }
                     history.add(t);
-                    index += 1;
+                    t.store();
                     System.out.println(" Added this task:");
                     System.out.println("   " + t);
-                    System.out.println(" You now have " + index + " task(s)");
+                    System.out.println(" You now have " + history.size() + " task(s)");
                 } catch (JoulesException e) {
                     System.out.println(e.getMessage());
                 }
