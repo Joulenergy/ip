@@ -1,4 +1,8 @@
+import java.util.Scanner;
+
 public class Ui {
+    private static final Scanner SCANNER = new Scanner(System.in);
+
     public void showWelcome() {
         System.out.println(" Hello! I'm Joules!");
         System.out.println("""
@@ -28,6 +32,10 @@ public class Ui {
                 /_______.'   `-..-'        `'-..-'  (_I_) \s
                                                           \s""");
         System.out.println(" Hope to see you again soon!");
+    }
+
+    public String readInput() {
+        return Ui.SCANNER.nextLine();
     }
 
     public void listTasks(TaskList tasks) {
