@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDate;
 
 public class Store {
     private static final String PATH = "/store/tasks.txt";
@@ -24,7 +25,7 @@ public class Store {
                     t = new Todo(taskDetails[2]);
                     break;
                 case "D":
-                    t = new Deadline(taskDetails[2], taskDetails[3]);
+                    t = new Deadline(taskDetails[2], LocalDate.parse(taskDetails[3]));
                     break;
                 case "E":
                     t = new Event(taskDetails[2], taskDetails[3], taskDetails[4]);
