@@ -6,9 +6,11 @@ import java.util.Set;
 import java.time.LocalDate;
 
 public class Joules {
+
+    private static final Ui UI = new Ui();
+
     public static void main(String[] args) {
-        System.out.println(" Hello! I'm Joules!\n" +
-                " What can I do for you?");
+        UI.showWelcome();
 
         // Load input
         ArrayList<Task> history = new ArrayList<>(100);
@@ -22,12 +24,9 @@ public class Joules {
             String[] commands = input.split(" ");
             if (input.equals("bye")) {
                 bye = true;
-                System.out.println(" Bye. Hope to see you again soon!");
+                UI.showGoodbye();
             } else if (input.equals("list")) {
-                System.out.println(" You got this! These are your tasks:");
-                for (int i = 0; i < history.size(); i++) {
-                    System.out.printf(" %d.%s%n", i + 1, history.get(i));
-                }
+                UI.listTasks(history);
             } else if (commands.length == 2 && Set.of("mark", "unmark", "delete").contains(commands[0])){
                 try {
                     int taskNum = Integer.parseInt(commands[1]);
@@ -38,23 +37,20 @@ public class Joules {
                     if (commands[0].equals("mark")) {
                         task.mark();
                         Store.saveAll(history);
-                        System.out.println(" Keep up the good work! I've marked this task as done:");
-                        System.out.println("   " + task);
+                        UI.markTask(task);
                     } else if (commands[0].equals("unmark")) {
                         task.unmark();
                         Store.saveAll(history);
-                        System.out.println(" Okay, I've marked this task as not done yet::");
-                        System.out.println("   " + task);
+                        UI.unMarkTask(task);
                     } else {
                         // delete
                         history.remove(taskNum - 1);
-                        System.out.println("Okay, I've removed this task:");
-                        System.out.println("   " + task);
+                        UI.deleteTask(task);
                     }
                 } catch (NumberFormatException e) {
-                    System.out.println(" Please enter a valid task number!");
+                    UI.showError(" Please enter a valid task number!");
                 } catch (JoulesException e) {
-                    System.out.println(e.getMessage());
+                    UI.showError(e.getMessage());
                 }
             } else {
                 Task t;
@@ -96,15 +92,13 @@ public class Joules {
                             throw new JoulesException(" Invalid date format or value, use yyyy-MM-dd ");
                         }
                     } else {
-                        throw new JoulesException(" Sorry, I do not understand :<");
+                        throw new JoulesException(" Sorry, I do not understand ;<");
                     }
                     history.add(t);
                     t.store();
-                    System.out.println(" Added this task:");
-                    System.out.println("   " + t);
-                    System.out.println(" You now have " + history.size() + " task(s)");
+                    UI.addTask(t, history.size());
                 } catch (JoulesException e) {
-                    System.out.println(e.getMessage());
+                    UI.showError(e.getMessage());
                 }
             }
         }
