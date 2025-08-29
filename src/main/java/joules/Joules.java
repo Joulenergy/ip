@@ -45,17 +45,20 @@ public class Joules {
         // Accept user commands
         boolean bye = false;
         while (!bye) {
-            String input = UI.readInput();
-            String[] commands = input.split(" ");
-            if (input.equals("bye")) {
-                bye = true;
-                UI.showGoodbye();
-            } else if (input.equals("list")) {
-                UI.listTasks(tasks);
-            } else if (commands.length == 2 && Set.of("mark", "unmark", "delete").contains(commands[0])) {
-                try {
-                    int taskNum = Parser.parseTaskNum(input, tasks);
-                    Task task = tasks.getTask(taskNum);
+            try {
+                String input = UI.readInput();
+                String[] commands = input.split(" ");
+                if (input.equals("bye")) {
+                    bye = true;
+                    UI.showGoodbye();
+                } else if (input.equals("list")) {
+                    UI.listTasks(history);
+                } else if (commands[0].equals("find")) {
+                    String keyword = Parser.parseFind(input);
+                    UI.listMatchingTasks(keyword, history);
+                } else if (commands.length == 2 && Set.of("mark", "unmark", "delete").contains(commands[0])) {
+                    int taskNum = Parser.parseTaskNum(input, history);
+                    Task task = history.getTask(taskNum);
                     if (commands[0].equals("mark")) {
                         task.mark();
                         Store.saveAll(tasks);
@@ -69,12 +72,8 @@ public class Joules {
                         tasks.removeTask(taskNum);
                         UI.deleteTask(task);
                     }
-                } catch (JoulesException e) {
-                    UI.showError(e.getMessage());
-                }
-            } else {
-                Task t;
-                try {
+                } else {
+                    Task t;
                     if (commands[0].equals("todo")) {
                         String todo = Parser.parseTodo(input);
                         t = new Todo(todo);
@@ -90,9 +89,9 @@ public class Joules {
                     tasks.addTask(t);
                     t.store();
                     UI.addTask(t, tasks.taskCount());
-                } catch (JoulesException e) {
-                    UI.showError(e.getMessage());
                 }
+            } catch (JoulesException e) {
+                UI.showError(e.getMessage());
             }
         }
     }

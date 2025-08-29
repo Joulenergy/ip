@@ -66,4 +66,25 @@ public class TaskList {
             System.out.printf(" %d.%s%n", i , getTask(i));
         }
     }
+
+    /**
+     * Prints all tasks in this TaskList whose descriptions contain the given keyword.
+     * Each matching task is numbered in order of appearance. If no tasks match,
+     * prints "None found".
+     *
+     * @param keyword The keyword to search for in task descriptions.
+     */
+    public void printMatchingTaskList(String keyword) {
+        int found = 0;
+        for (int i = 1; i <= taskCount(); i++) {
+            Task t = getTask(i);
+            if (t.matchDescription(keyword)) {
+                found += 1;
+                System.out.printf(" %d.%s%n", found , t);
+            }
+        }
+        if (found == 0) {
+            System.out.println(" None found");
+        }
+    }
 }

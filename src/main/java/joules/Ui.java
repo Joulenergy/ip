@@ -81,6 +81,18 @@ public class Ui {
     }
 
     /**
+     * Prints all tasks from the given TaskList that contain the specified keyword
+     * in their description.
+     *
+     * @param keyword The string to search for in each task's description.
+     * @param tasks The TaskList containing the tasks to search through.
+     */
+    public void listMatchingTasks(String keyword, TaskList tasks) {
+        System.out.println(" I have found these matching tasks:");
+        tasks.printMatchingTaskList(keyword);
+    }
+
+    /**
      * Displays a message that the specified task has been unmarked (not done).
      *
      * @param t The task that was unmarked.

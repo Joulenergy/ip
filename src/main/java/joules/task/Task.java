@@ -62,6 +62,16 @@ public abstract class Task {
     }
 
     /**
+     * Checks if the task description contains the given keyword, case-insensitive.
+     *
+     * @param keyword The keyword to search for in the description.
+     * @return true If the keyword appears in the description; false otherwise.
+     */
+    public boolean matchDescription(String keyword) {
+        return this.description.toLowerCase().contains(keyword.toLowerCase());
+    }
+
+    /**
      * Returns a string suitable for storage in the persistent file.
      * <p>
      * The format includes completion status and description, separated by " | ".
