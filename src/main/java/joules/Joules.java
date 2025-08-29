@@ -9,11 +9,30 @@ import joules.task.Event;
 import java.util.Set;
 import java.time.LocalDate;
 
+/**
+ * Entry point for the Joules chatbot application.
+ * <p>
+ * This class contains the {@code main} method that starts the chatbot,
+ * initializes stored tasks, and continuously processes user commands
+ * until the user exits with the {@code bye} command.
+ * </p>
+ */
 public class Joules {
-
+    /** User interface for interacting with the chatbot */
     private static final Ui UI = new Ui();
+
+    /** List of tasks representing the user's task history */
     private static final TaskList history = new TaskList(100);
 
+    /**
+     * Starts the Joules chatbot
+     * This method processes commands such as {@code todo},
+     * {@code deadline}, {@code event}, {@code mark}, {@code unmark},
+     * {@code delete}, and {@code list}.
+     * The loop continues until the {@code bye} command is received.
+     *
+     * @param args Command-line arguments (not used).
+     */
     public static void main(String[] args) {
         UI.showWelcome();
 
