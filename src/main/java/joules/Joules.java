@@ -18,11 +18,14 @@ import java.time.LocalDate;
  * </p>
  */
 public class Joules {
+    /** Initial size of task list */
+    private static final int DEFAULT_CAPACITY = 100;
+
     /** User interface for interacting with the chatbot */
     private static final Ui UI = new Ui();
 
     /** List of tasks representing the user's task history */
-    private static final TaskList history = new TaskList(100);
+    private static final TaskList tasks = new TaskList(DEFAULT_CAPACITY);
 
     /**
      * Starts the Joules chatbot
@@ -37,7 +40,7 @@ public class Joules {
         UI.showWelcome();
 
         // Load input
-        Store.loadTasks(history);
+        Store.loadTasks(tasks);
 
         // Accept user commands
         boolean bye = false;
@@ -48,22 +51,22 @@ public class Joules {
                 bye = true;
                 UI.showGoodbye();
             } else if (input.equals("list")) {
-                UI.listTasks(history);
+                UI.listTasks(tasks);
             } else if (commands.length == 2 && Set.of("mark", "unmark", "delete").contains(commands[0])) {
                 try {
-                    int taskNum = Parser.parseTaskNum(input, history);
-                    Task task = history.getTask(taskNum);
+                    int taskNum = Parser.parseTaskNum(input, tasks);
+                    Task task = tasks.getTask(taskNum);
                     if (commands[0].equals("mark")) {
                         task.mark();
-                        Store.saveAll(history);
+                        Store.saveAll(tasks);
                         UI.markTask(task);
                     } else if (commands[0].equals("unmark")) {
                         task.unmark();
-                        Store.saveAll(history);
+                        Store.saveAll(tasks);
                         UI.unMarkTask(task);
                     } else {
                         // delete
-                        history.removeTask(taskNum);
+                        tasks.removeTask(taskNum);
                         UI.deleteTask(task);
                     }
                 } catch (JoulesException e) {
@@ -84,9 +87,9 @@ public class Joules {
                     } else {
                         throw new JoulesException(" Sorry, I do not understand ;<");
                     }
-                    history.addTask(t);
+                    tasks.addTask(t);
                     t.store();
-                    UI.addTask(t, history.taskCount());
+                    UI.addTask(t, tasks.taskCount());
                 } catch (JoulesException e) {
                     UI.showError(e.getMessage());
                 }
