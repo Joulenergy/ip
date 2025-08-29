@@ -48,6 +48,11 @@ public class Ui {
         tasks.printTaskList();
     }
 
+    public void listMatchingTasks(String keyword, TaskList tasks) {
+        System.out.println(" I have found these matching tasks:");
+        tasks.printMatchingTaskList(keyword);
+    }
+
     public void markTask(Task t) {
         System.out.println(" Keep up the good work! I've marked this task as done:");
         System.out.println("   " + t);

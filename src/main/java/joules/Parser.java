@@ -6,6 +6,14 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
 public class Parser {
+    public static String parseFind(String input) throws JoulesException {
+        String[] split = input.split("find ");
+        if (split.length == 1 || split[1].trim().isEmpty()) {
+            throw new JoulesException(" Please add a keyword about what task you want to find!");
+        }
+        return split[1].trim();
+    }
+
     public static int parseTaskNum(String input, TaskList tasks) throws JoulesException {
         String[] commands = input.split(" ");
         try {

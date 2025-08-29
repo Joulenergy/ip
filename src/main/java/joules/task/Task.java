@@ -21,6 +21,10 @@ public abstract class Task {
         this.isDone = false;
     }
 
+    public boolean matchDescription(String keyword) {
+        return this.description.toLowerCase().contains(keyword.toLowerCase());
+    }
+
     @Override
     public String toString() {
         return String.format("[%s] %s", getStatusIcon(), this.description);
