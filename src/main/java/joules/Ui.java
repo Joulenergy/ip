@@ -48,6 +48,13 @@ public class Ui {
         tasks.printTaskList();
     }
 
+    /**
+     * Prints all tasks from the given TaskList that contain the specified keyword
+     * in their description.
+     *
+     * @param keyword The string to search for in each task's description.
+     * @param tasks The TaskList containing the tasks to search through.
+     */
     public void listMatchingTasks(String keyword, TaskList tasks) {
         System.out.println(" I have found these matching tasks:");
         tasks.printMatchingTaskList(keyword);

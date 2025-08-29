@@ -6,6 +6,13 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
 public class Parser {
+    /**
+     * Parses a "find" command to extract the keyword to search for.
+     *
+     * @param input The full user input starting with "find".
+     * @return The keyword to search for, trimmed of leading/trailing spaces.
+     * @throws JoulesException If no keyword is provided after "find".
+     */
     public static String parseFind(String input) throws JoulesException {
         String[] split = input.split("find ");
         if (split.length == 1 || split[1].trim().isEmpty()) {
