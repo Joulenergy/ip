@@ -12,9 +12,29 @@ import java.io.IOException;
 import java.util.Scanner;
 import java.time.LocalDate;
 
+/**
+ * Handles persistent storage of tasks for the Joules chatbot.
+ * <p>
+ * This class provides static methods to load tasks from a file,
+ * store individual tasks, and save all tasks to a file.
+ * </p>
+ */
 public class Store {
+    /** Path to read stored tasks */
     private static final String PATH = "/store/tasks.txt";
 
+    /**
+     * Loads tasks from the storage file into the given {@link TaskList}.
+     * <p>
+     * If the file does not exist, it will be created automatically.
+     * Each line in the file represents a task with the format:
+     * <pre>
+     * type | isDone | description | [date] | [endDate]
+     * </pre>
+     * </p>
+     *
+     * @param tasks The {@link TaskList} to populate with loaded tasks.
+     */
     public static void loadTasks(TaskList tasks) {
         File f = new File(Store.PATH);
         try {
@@ -52,6 +72,11 @@ public class Store {
         }
     }
 
+    /**
+     * Appends a single task string to the storage file.
+     *
+     * @param textToAppend The string representation of the task to append.
+     */
     public static void storeTask(String textToAppend) {
         try {
             FileWriter fw = new FileWriter(Store.PATH, true);
@@ -62,6 +87,15 @@ public class Store {
         }
     }
 
+    /**
+     * Saves all tasks in the given {@link TaskList} to the storage file.
+     * <p>
+     * This method overwrites the file contents and writes all tasks
+     * in their current state.
+     * </p>
+     *
+     * @param tasks The {@link TaskList} containing tasks to save.
+     */
     public static void saveAll(TaskList tasks) {
         try {
             // clear the file

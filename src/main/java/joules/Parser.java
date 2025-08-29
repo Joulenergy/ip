@@ -5,7 +5,23 @@ import joules.task.TaskList;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
+/**
+ * Parses user input commands in the Joules chatbot.
+ * <p>
+ * Provides static methods to extract task numbers, descriptions, deadlines,
+ * and event dates from user input strings.
+ * </p>
+ */
 public class Parser {
+    /**
+     * Parses the task number from a user input command.
+     *
+     * @param input The full user input string (e.g., "mark 2").
+     * @param tasks The current list of tasks.
+     * @return The parsed task number.
+     * @throws JoulesException If the input is not a valid integer or
+     *                         if the task number is out of range.
+     */
     public static int parseTaskNum(String input, TaskList tasks) throws JoulesException {
         String[] commands = input.split(" ");
         try {
@@ -19,6 +35,13 @@ public class Parser {
         }
     }
 
+    /**
+     * Parses the description of a todo task from a user input command.
+     *
+     * @param input The full user input string (e.g., "todo read book").
+     * @return The todo description.
+     * @throws JoulesException If the description is missing or empty.
+     */
     public static String parseTodo(String input) throws JoulesException {
         String[] split = input.split("todo ");
         if (split.length == 1 || split[1].trim().isEmpty()) {
@@ -27,8 +50,15 @@ public class Parser {
         return split[1];
     }
 
+    /**
+     * Parses the description and deadline date of a deadline task from a user input command.
+     *
+     * @param input The full user input string (e.g., "deadline submit report /by 2025-09-30").
+     * @return An array where the first element is the description and the second is the deadline date.
+     * @throws JoulesException If the description or date is missing or invalid.
+     */
     public static String[] parseDeadline(String input) throws JoulesException {
-        String[] split = input.split("deadline |/by ");
+        String[] split = input.split("deadline |/by");
         if (split.length == 1 || split[1].trim().isEmpty()) {
             throw new JoulesException(" Please add a description about what the deadline is!");
         }
@@ -36,13 +66,21 @@ public class Parser {
             throw new JoulesException(" Please add a deadline with /by!");
         }
         try {
-            LocalDate date = LocalDate.parse(split[2]);
-            return new String[] { split[1].trim(), split[2] };
+            LocalDate date = LocalDate.parse(split[2].trim());
+            return new String[] { split[1].trim(), split[2].trim() };
         } catch (DateTimeParseException e) {
             throw new JoulesException(" Invalid date format or value, use yyyy-MM-dd ");
         }
     }
 
+    /**
+     * Parses the description and start/end dates of an event task from a user input command.
+     *
+     * @param input The full user input string (e.g., "event meeting /from 2025-09-30 /to 2025-10-01").
+     * @return An array where the first element is the description,
+     *         the second is the start date, and the third is the end date.
+     * @throws JoulesException If the description or dates are missing or invalid.
+     */
     public static String[] parseEvent(String input) throws JoulesException {
         String[] split = input.split("event |/from |/to ");
         if (split.length == 1 || split[1].trim().isEmpty()) {
