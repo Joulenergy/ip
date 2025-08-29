@@ -45,9 +45,7 @@ public class Ui {
 
     public void listTasks(TaskList tasks) {
         System.out.println(" You got this! These are your tasks:");
-        for (int i = 1; i <= tasks.taskCount(); i++) {
-            System.out.printf(" %d.%s%n", i + 1, tasks.getTask(i));
-        }
+        tasks.printTaskList();
     }
 
     public void markTask(Task t) {

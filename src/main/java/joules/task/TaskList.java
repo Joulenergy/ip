@@ -25,4 +25,10 @@ public class TaskList {
     public int taskCount() {
         return this.tasks.size();
     }
+
+    public void printTaskList() {
+        for (int i = 1; i <= taskCount(); i++) {
+            System.out.printf(" %d.%s%n", i , getTask(i));
+        }
+    }
 }
