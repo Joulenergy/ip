@@ -10,9 +10,9 @@ import java.util.Set;
 import java.time.LocalDate;
 
 public class Joules {
-
+    private static final int DEFAULT_CAPACITY = 100;
     private static final Ui UI = new Ui();
-    private static final TaskList history = new TaskList(100);
+    private static final TaskList history = new TaskList(DEFAULT_CAPACITY);
 
     public static void main(String[] args) {
         UI.showWelcome();
