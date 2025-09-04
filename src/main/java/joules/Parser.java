@@ -1,9 +1,9 @@
 package joules;
 
-import joules.task.TaskList;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+
+import joules.task.TaskList;
 
 /**
  * Parses user input commands in the Joules chatbot.

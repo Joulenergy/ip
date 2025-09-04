@@ -1,13 +1,13 @@
 package joules;
 
+import java.time.LocalDate;
+import java.util.Set;
+
+import joules.task.Deadline;
+import joules.task.Event;
 import joules.task.Task;
 import joules.task.TaskList;
-import joules.task.Deadline;
 import joules.task.Todo;
-import joules.task.Event;
-
-import java.util.Set;
-import java.time.LocalDate;
 
 /**
  * Entry point for the Joules chatbot application.
