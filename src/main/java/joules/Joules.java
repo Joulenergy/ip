@@ -52,13 +52,13 @@ public class Joules {
                     bye = true;
                     UI.showGoodbye();
                 } else if (input.equals("list")) {
-                    UI.listTasks(history);
+                    UI.listTasks(tasks);
                 } else if (commands[0].equals("find")) {
                     String keyword = Parser.parseFind(input);
-                    UI.listMatchingTasks(keyword, history);
+                    UI.listMatchingTasks(keyword, tasks);
                 } else if (commands.length == 2 && Set.of("mark", "unmark", "delete").contains(commands[0])) {
-                    int taskNum = Parser.parseTaskNum(input, history);
-                    Task task = history.getTask(taskNum);
+                    int taskNum = Parser.parseTaskNum(input, tasks);
+                    Task task = tasks.getTask(taskNum);
                     if (commands[0].equals("mark")) {
                         task.mark();
                         Store.saveAll(tasks);
