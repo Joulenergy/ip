@@ -1,9 +1,9 @@
 package joules.task;
 
-import joules.Store;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+
+import joules.Store;
 
 /**
  * Represents an event task with a start and end date.

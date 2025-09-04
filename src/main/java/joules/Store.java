@@ -1,16 +1,16 @@
 package joules;
 
-import joules.task.Task;
-import joules.task.TaskList;
-import joules.task.Deadline;
-import joules.task.Todo;
-import joules.task.Event;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Scanner;
 import java.time.LocalDate;
+import java.util.Scanner;
+
+import joules.task.Deadline;
+import joules.task.Event;
+import joules.task.Task;
+import joules.task.TaskList;
+import joules.task.Todo;
 
 /**
  * Handles persistent storage of tasks for the Joules chatbot.
