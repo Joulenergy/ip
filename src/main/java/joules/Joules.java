@@ -28,71 +28,73 @@ public class Joules {
     private static final TaskList tasks = new TaskList(DEFAULT_CAPACITY);
 
     /**
-     * Starts the Joules chatbot
-     * This method processes commands such as {@code todo},
-     * {@code deadline}, {@code event}, {@code mark}, {@code unmark},
-     * {@code delete}, and {@code list}.
-     * The loop continues until the {@code bye} command is received.
-     *
-     * @param args Command-line arguments (not used).
+     * Constructs the Joules chatbot
      */
-    public static void main(String[] args) {
-        UI.showWelcome();
-
+    public Joules() {
         // Load input
         Store.loadTasks(tasks);
+    }
 
-        // Accept user commands
-        boolean bye = false;
-        while (!bye) {
-            try {
-                String input = UI.readInput();
-                String[] commands = input.split(" ");
-                if (input.equals("bye")) {
-                    bye = true;
-                    UI.showGoodbye();
-                } else if (input.equals("list")) {
-                    UI.listTasks(tasks);
-                } else if (commands[0].equals("find")) {
-                    String keyword = Parser.parseFind(input);
-                    UI.listMatchingTasks(keyword, tasks);
-                } else if (commands.length == 2 && Set.of("mark", "unmark", "delete").contains(commands[0])) {
-                    int taskNum = Parser.parseTaskNum(input, tasks);
-                    Task task = tasks.getTask(taskNum);
-                    if (commands[0].equals("mark")) {
-                        task.mark();
-                        Store.saveAll(tasks);
-                        UI.markTask(task);
-                    } else if (commands[0].equals("unmark")) {
-                        task.unmark();
-                        Store.saveAll(tasks);
-                        UI.unMarkTask(task);
-                    } else {
-                        // delete
-                        tasks.removeTask(taskNum);
-                        UI.deleteTask(task);
-                    }
+    /**
+     * Generates a response for the user's chat message.
+     * This method processes commands such as {@code todo},
+     * {@code deadline}, {@code event}, {@code mark}, {@code unmark},
+     * {@code delete}, and {@code list} until the {@code bye} command
+     * is received.
+     *
+     * @param input User's chat message.
+     * @return Joules response string.
+     */
+    public String getResponse(String input) {
+        try {
+            String[] commands = input.split(" ");
+            if (input.equals("bye")) {
+                return UI.getGoodbyeMessage();
+            } else if (input.equals("list")) {
+                return UI.getAllTasksMessage(tasks);
+            } else if (commands[0].equals("find")) {
+                String keyword = Parser.parseFind(input);
+                return UI.getMatchingTasksMessage(keyword, tasks);
+            } else if (commands.length == 2 && Set.of("mark", "unmark", "delete").contains(commands[0])) {
+                int taskNum = Parser.parseTaskNum(input, tasks);
+                Task task = tasks.getTask(taskNum);
+                if (commands[0].equals("mark")) {
+                    task.mark();
+                    Store.saveAll(tasks);
+                    return UI.getMarkedTaskMessage(task);
+                } else if (commands[0].equals("unmark")) {
+                    task.unmark();
+                    Store.saveAll(tasks);
+                    return UI.getUnmarkedTaskMessage(task);
                 } else {
-                    Task t;
-                    if (commands[0].equals("todo")) {
-                        String todo = Parser.parseTodo(input);
-                        t = new Todo(todo);
-                    } else if (commands[0].equals("deadline")) {
-                        String[] deadline = Parser.parseDeadline(input);
-                        t = new Deadline(deadline[0], LocalDate.parse(deadline[1]));
-                    } else if (commands[0].equals("event")) {
-                        String[] event = Parser.parseEvent(input);
-                        t = new Event(event[0], LocalDate.parse(event[1]), LocalDate.parse(event[2]));
-                    } else {
-                        throw new JoulesException(" Sorry, I do not understand ;<");
-                    }
-                    tasks.addTask(t);
-                    t.store();
-                    UI.addTask(t, tasks.taskCount());
+                    // delete
+                    tasks.removeTask(taskNum);
+                    return UI.getDeletedTaskMessage(task);
                 }
-            } catch (JoulesException e) {
-                UI.showError(e.getMessage());
+            } else {
+                Task t;
+                if (commands[0].equals("todo")) {
+                    String todo = Parser.parseTodo(input);
+                    t = new Todo(todo);
+                } else if (commands[0].equals("deadline")) {
+                    String[] deadline = Parser.parseDeadline(input);
+                    t = new Deadline(deadline[0], LocalDate.parse(deadline[1]));
+                } else if (commands[0].equals("event")) {
+                    String[] event = Parser.parseEvent(input);
+                    t = new Event(event[0], LocalDate.parse(event[1]), LocalDate.parse(event[2]));
+                } else {
+                    throw new JoulesException(" I do not understand your command ;<");
+                }
+                tasks.addTask(t);
+                t.store();
+                return UI.getAddedTaskMessage(t, tasks.taskCount());
             }
+        } catch (JoulesException e) {
+            return UI.getErrorMessage(e.getMessage());
         }
+    }
+
+    public String welcome() {
+        return UI.getWelcomeMessage();
     }
 }
