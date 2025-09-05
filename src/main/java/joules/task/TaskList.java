@@ -58,33 +58,41 @@ public class TaskList {
     }
 
     /**
-     * Prints all tasks in the task list to the console.
+     * Returns all tasks in the task list in a formatted string.
      * Each task is prefixed with its 1-based index.
+     *
+     * @return Formatted task list string or {@code "None found"}
      */
-    public void printTaskList() {
-        for (int i = 1; i <= taskCount(); i++) {
-            System.out.printf(" %d.%s%n", i , getTask(i));
+    public String getTaskListString() {
+        if (taskCount() == 0) {
+            return "None found";
         }
+        StringBuilder taskList = new StringBuilder();
+        for (int i = 1; i <= taskCount(); i++) {
+            taskList.append(String.format(" %d.%s%n", i, getTask(i)));
+        }
+        return String.valueOf(taskList);
     }
 
     /**
-     * Prints all tasks in this TaskList whose descriptions contain the given keyword.
-     * Each matching task is numbered in order of appearance. If no tasks match,
-     * prints "None found".
+     * Returns a formatted string of all tasks in {@code TaskList}
+     * whose descriptions contain the given keyword. Each matching task is
+     * numbered in order of appearance. If no tasks match, the string
+     * {@code "None found"} is returned.
      *
      * @param keyword The keyword to search for in task descriptions.
+     * @return A formatted string of matching tasks, or {@code "None found"} if none match.
      */
-    public void printMatchingTaskList(String keyword) {
+    public String getMatchingTaskListString(String keyword) {
         int found = 0;
+        StringBuilder taskList = new StringBuilder();
         for (int i = 1; i <= taskCount(); i++) {
             Task t = getTask(i);
             if (t.matchDescription(keyword)) {
                 found += 1;
-                System.out.printf(" %d.%s%n", found , t);
+                taskList.append(String.format(" %d.%s%n", found, t));
             }
         }
-        if (found == 0) {
-            System.out.println(" None found");
-        }
+        return found == 0 ? " None found" : String.valueOf(taskList);
     }
 }
