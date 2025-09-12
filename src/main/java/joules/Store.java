@@ -36,6 +36,7 @@ public class Store {
      * @param tasks The {@link TaskList} to populate with loaded tasks.
      */
     public static void loadTasks(TaskList tasks) {
+        assert PATH != null && !PATH.trim().isEmpty() : "Storage path must be defined";
         File f = new File(Store.PATH);
         try {
             if (!f.exists()) {
@@ -47,6 +48,7 @@ public class Store {
                 String line = s.nextLine();
                 String[] taskDetails = line.split(" \\| ");
                 Task t = null;
+                assert taskDetails[0] != null : "Task type should not be null";
                 switch (taskDetails[0]) {
                 case "T":
                     t = new Todo(taskDetails[2]);
@@ -78,6 +80,7 @@ public class Store {
      * @param textToAppend The string representation of the task to append.
      */
     public static void storeTask(String textToAppend) {
+        assert PATH != null && !PATH.trim().isEmpty() : "Storage path must be defined";
         try {
             FileWriter fw = new FileWriter(Store.PATH, true);
             fw.write(textToAppend + "\n");
@@ -101,6 +104,7 @@ public class Store {
             // clear the file
             FileWriter fw = new FileWriter(Store.PATH);
             fw.close();
+            assert tasks.taskCount() >= 0 : "Task count should not be negative";
             for (int i = 1; i <= tasks.taskCount(); i++) {
                 tasks.getTask(i).store();
             }

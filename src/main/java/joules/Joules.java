@@ -54,10 +54,12 @@ public class Joules {
                 return UI.getAllTasksMessage(tasks);
             } else if (commands[0].equals("find")) {
                 String keyword = Parser.parseFind(input);
+                assert keyword != "" : "keyword should not be empty";
                 return UI.getMatchingTasksMessage(keyword, tasks);
             } else if (commands.length == 2 && Set.of("mark", "unmark", "delete").contains(commands[0])) {
                 int taskNum = Parser.parseTaskNum(input, tasks);
                 Task task = tasks.getTask(taskNum);
+                assert task != null : "task should not be null";
                 if (commands[0].equals("mark")) {
                     task.mark();
                     Store.saveAll(tasks);
@@ -85,6 +87,7 @@ public class Joules {
                 } else {
                     throw new JoulesException(" I do not understand your command ;<");
                 }
+                assert t != null : "Task t should not be null";
                 tasks.addTask(t);
                 t.store();
                 return UI.getAddedTaskMessage(t, tasks.taskCount());
