@@ -56,45 +56,93 @@ public class Joules {
                 String keyword = Parser.parseFind(input);
                 assert keyword != "" : "keyword should not be empty";
                 return UI.getMatchingTasksMessage(keyword, tasks);
-            } else if (commands.length == 2 && Set.of("mark", "unmark", "delete").contains(commands[0])) {
+            } else if (Set.of("mark", "unmark", "delete").contains(commands[0])) {
                 int taskNum = Parser.parseTaskNum(input, tasks);
-                Task task = tasks.getTask(taskNum);
-                assert task != null : "task should not be null";
-                if (commands[0].equals("mark")) {
-                    task.mark();
-                    Store.saveAll(tasks);
-                    return UI.getMarkedTaskMessage(task);
-                } else if (commands[0].equals("unmark")) {
-                    task.unmark();
-                    Store.saveAll(tasks);
-                    return UI.getUnmarkedTaskMessage(task);
-                } else {
-                    // delete
-                    tasks.removeTask(taskNum);
-                    return UI.getDeletedTaskMessage(task);
-                }
-            } else {
-                Task t;
-                if (commands[0].equals("todo")) {
-                    String todo = Parser.parseTodo(input);
-                    t = new Todo(todo);
-                } else if (commands[0].equals("deadline")) {
-                    String[] deadline = Parser.parseDeadline(input);
-                    t = new Deadline(deadline[0], LocalDate.parse(deadline[1]));
-                } else if (commands[0].equals("event")) {
-                    String[] event = Parser.parseEvent(input);
-                    t = new Event(event[0], LocalDate.parse(event[1]), LocalDate.parse(event[2]));
-                } else {
-                    throw new JoulesException(" I do not understand your command ;<");
-                }
-                assert t != null : "Task t should not be null";
-                tasks.addTask(t);
-                t.store();
+                return executeChangeAndReturnMessage(taskNum, commands);
+            } else if (Set.of("todo", "deadline", "event").contains(commands[0])) {
+                Task t = createTask(input, commands);
                 return UI.getAddedTaskMessage(t, tasks.taskCount());
+            } else {
+                throw new JoulesException(" I do not understand your command ;<");
             }
         } catch (JoulesException e) {
             return UI.getErrorMessage(e.getMessage());
         }
+    }
+
+
+    /**
+     * Executes modification command {@code mark} {@code unmark} or {@code delete}
+     * on a task and returns the corresponding feedback message
+     * <p>
+     * After applying the change, this method persists the updated
+     * task list to storage.
+     * </p>
+     * @param taskNum 1-based index of the task to be modified.
+     * @param commands User input in array.
+     * @return Feedback message describing the result of the modification.
+     * @throws JoulesException If the command is invalid or the task number is out of range.
+     */
+    private static String executeChangeAndReturnMessage(int taskNum, String[] commands) throws JoulesException {
+        Task task = tasks.getTask(taskNum);
+        String message;
+        switch (commands[0]) {
+        case "mark" -> {
+            task.mark();
+            message = UI.getMarkedTaskMessage(task);
+        }
+        case "unmark" -> {
+            task.unmark();
+            message = UI.getUnmarkedTaskMessage(task);
+        }
+        case "delete" -> {
+            tasks.removeTask(taskNum);
+            message = UI.getDeletedTaskMessage(task);
+        }
+        default -> throw new JoulesException(" I do not understand your command ;<");
+        }
+        Store.saveAll(tasks);
+        return message;
+    }
+
+    /**
+     * Creates a new task based on the user input.
+     * <p>
+     * Supported commands are:
+     * <ul>
+     *   <li>{@code todo} – creates a {@link Todo}</li>
+     *   <li>{@code deadline} – creates a {@link Deadline} with a description and due date</li>
+     *   <li>{@code event} – creates an {@link Event} with a description, start date, and end date</li>
+     * </ul>
+     * The newly created task is added to the task list and stored persistently.
+     * </p>
+     *
+     * @param input Full user input string.
+     * @param commands Tokenized version of the input, where the first element
+     *                 specifies the task type.
+     * @return The task that was created and stored.
+     * @throws JoulesException If the input format is invalid or the command is unsupported.
+     */
+    private static Task createTask(String input, String[] commands) throws JoulesException {
+        Task t;
+        switch (commands[0]) {
+        case "todo" -> {
+            String todo = Parser.parseTodo(input);
+            t = new Todo(todo);
+        }
+        case "deadline" -> {
+            String[] deadline = Parser.parseDeadline(input);
+            t = new Deadline(deadline[0], LocalDate.parse(deadline[1]));
+        }
+        case "event" -> {
+            String[] event = Parser.parseEvent(input);
+            t = new Event(event[0], LocalDate.parse(event[1]), LocalDate.parse(event[2]));
+        }
+        default -> throw new JoulesException(" I do not understand your command ;<");
+        }
+        tasks.addTask(t);
+        t.store();
+        return t;
     }
 
     public String welcome() {
