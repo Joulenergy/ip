@@ -54,6 +54,7 @@ public class Joules {
                 return UI.getAllTasksMessage(tasks);
             } else if (commands[0].equals("find")) {
                 String keyword = Parser.parseFind(input);
+                assert keyword != "" : "keyword should not be empty";
                 return UI.getMatchingTasksMessage(keyword, tasks);
             } else if (Set.of("mark", "unmark", "delete").contains(commands[0])) {
                 int taskNum = Parser.parseTaskNum(input, tasks);

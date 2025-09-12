@@ -26,6 +26,7 @@ public class TaskList {
      * @param t The {@link Task} to add.
      */
     public void addTask(Task t) {
+        assert t != null : "Cannot add null task to TaskList";
         this.tasks.add(t);
     }
 
@@ -35,6 +36,7 @@ public class TaskList {
      * @param num The 1-based index of the task to remove.
      */
     public void removeTask(int num) {
+        assert num > 0 && num <= taskCount() : "Cannot remove a task not in list";
         this.tasks.remove(num - 1);
     }
 
@@ -45,6 +47,7 @@ public class TaskList {
      * @return The {@link Task} at the specified position.
      */
     public Task getTask(int num) {
+        assert num > 0 && num <= taskCount() : "Task index out of bounds for retrieval: " + num;
         return this.tasks.get(num - 1);
     }
 
@@ -64,6 +67,7 @@ public class TaskList {
      * @return Formatted task list string or {@code "None found"}
      */
     public String getTaskListString() {
+        assert taskCount() >= 0 : "Task count should never be negative";
         if (taskCount() == 0) {
             return "None found";
         }
@@ -84,10 +88,12 @@ public class TaskList {
      * @return A formatted string of matching tasks, or {@code "None found"} if none match.
      */
     public String getMatchingTaskListString(String keyword) {
+        assert keyword != null && !keyword.trim().isEmpty() : "Keyword for matching must be non-empty";
         int found = 0;
         StringBuilder taskList = new StringBuilder();
         for (int i = 1; i <= taskCount(); i++) {
             Task t = getTask(i);
+            assert t != null : "Task at index " + i + " should not be null";
             if (t.matchDescription(keyword)) {
                 found += 1;
                 taskList.append(String.format(" %d.%s%n", found, t));
