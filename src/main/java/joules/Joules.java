@@ -58,9 +58,11 @@ public class Joules {
             } else if (Set.of("mark", "unmark", "delete").contains(commands[0])) {
                 int taskNum = Parser.parseTaskNum(input, tasks);
                 return executeChangeAndReturnMessage(taskNum, commands);
-            } else {
+            } else if (Set.of("todo", "deadline", "event").contains(commands[0])) {
                 Task t = createTask(input, commands);
                 return UI.getAddedTaskMessage(t, tasks.taskCount());
+            } else {
+                throw new JoulesException(" I do not understand your command ;<");
             }
         } catch (JoulesException e) {
             return UI.getErrorMessage(e.getMessage());
