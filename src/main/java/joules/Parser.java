@@ -25,7 +25,9 @@ public class Parser {
         if (split.length == 1 || split[1].trim().isEmpty()) {
             throw new JoulesException(" Please add a keyword about what task you want to find!");
         }
-        return split[1].trim();
+        String keyword = split[1].trim();
+        assert !keyword.isEmpty() : "Keyword should not be empty after validation";
+        return keyword;
     }
 
     /**
@@ -40,10 +42,14 @@ public class Parser {
     public static int parseTaskNum(String input, TaskList tasks) throws JoulesException {
         String[] commands = input.split(" ");
         try {
+            assert commands.length >= 2 : "Expected task number after command";
             int taskNum = Integer.parseInt(commands[1]);
             if (taskNum > tasks.taskCount()) {
                 throw new JoulesException(" There are only " + tasks.taskCount() + " tasks!");
+            } else if (taskNum <= 0) {
+                throw new JoulesException(" There is no task with a negative number!");
             }
+            assert taskNum > 0 && taskNum < tasks.taskCount() : "Task number should be valid";
             return taskNum;
         } catch (NumberFormatException e) {
             throw new JoulesException(" Please enter a valid task number!");
@@ -62,6 +68,7 @@ public class Parser {
         if (split.length == 1 || split[1].trim().isEmpty()) {
             throw new JoulesException(" Please add a description about what the todo is!");
         }
+        assert !split[1].isEmpty() : "Todo description should not be empty after validation";
         return split[1];
     }
 
@@ -82,6 +89,7 @@ public class Parser {
         }
         try {
             LocalDate date = LocalDate.parse(split[2].trim());
+            assert date != null : "Parsed deadline date should not be null";
             return new String[] { split[1].trim(), split[2].trim() };
         } catch (DateTimeParseException e) {
             throw new JoulesException(" Invalid date format or value, use yyyy-MM-dd ");
@@ -107,6 +115,7 @@ public class Parser {
         try {
             LocalDate fromDate = LocalDate.parse(split[2].trim());
             LocalDate toDate = LocalDate.parse(split[3]);
+            assert fromDate != null && toDate != null : "Parsed event dates should not be null";
             return new String[] { split[1].trim(), split[2].trim(), split[3] };
         } catch (DateTimeParseException e) {
             throw new JoulesException(" Invalid date format or value, use yyyy-MM-dd ");
