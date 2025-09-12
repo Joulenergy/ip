@@ -39,6 +39,9 @@ public class Parser {
      */
     public static int parseTaskNum(String input, TaskList tasks) throws JoulesException {
         String[] commands = input.split(" ");
+        if (commands.length != 2) {
+            throw new JoulesException("Mark, unmark and delete is followed by one task number only");
+        }
         try {
             int taskNum = Integer.parseInt(commands[1]);
             if (taskNum > tasks.taskCount()) {
