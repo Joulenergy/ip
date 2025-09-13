@@ -3,8 +3,6 @@ package joules;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
-import joules.task.TaskList;
-
 /**
  * Parses user input commands in the Joules chatbot.
  * <p>
@@ -21,9 +19,9 @@ public class Parser {
      * @throws JoulesException If no keyword is provided after "find".
      */
     public static String parseFind(String input) throws JoulesException {
-        String[] split = input.split("find ");
+        String[] split = input.split("find |findc ");
         if (split.length == 1 || split[1].trim().isEmpty()) {
-            throw new JoulesException(" Please add a keyword about what task you want to find!");
+            throw new JoulesException(" Please add a keyword about what you want to find!");
         }
         String keyword = split[1].trim();
         assert !keyword.isEmpty() : "Keyword should not be empty after validation";
@@ -31,31 +29,31 @@ public class Parser {
     }
 
     /**
-     * Parses the task number from a user input command.
+     * Parses a number that follows a user input command for example {@code mark}.
      *
      * @param input The full user input string (e.g., "mark 2").
-     * @param tasks The current list of tasks.
-     * @return The parsed task number.
+     * @param items The list of items.
+     * @return The parsed item number.
      * @throws JoulesException If the input is not a valid integer or
-     *                         if the task number is out of range.
+     *                         if the item number is out of range.
      */
-    public static int parseTaskNum(String input, TaskList tasks) throws JoulesException {
+    public static <T> int parseNumAfterCommand(String input, ItemList<T> items) throws JoulesException {
         String[] commands = input.split(" ");
         if (commands.length != 2) {
-            throw new JoulesException("Mark, unmark and delete is followed by one task number only");
+            throw new JoulesException(commands[0] + " is followed by one number only");
         }
         try {
-            assert commands.length >= 2 : "Expected task number after command";
-            int taskNum = Integer.parseInt(commands[1]);
-            if (taskNum > tasks.taskCount()) {
-                throw new JoulesException(" There are only " + tasks.taskCount() + " tasks!");
-            } else if (taskNum <= 0) {
-                throw new JoulesException(" There is no task with a negative number!");
+            assert commands.length >= 2 : "Expected number after command";
+            int num = Integer.parseInt(commands[1]);
+            if (num > items.itemCount()) {
+                throw new JoulesException(" There are only " + items.itemCount() + " items in the list!");
+            } else if (num <= 0) {
+                throw new JoulesException(" There is no list item with a negative number!");
             }
-            assert taskNum > 0 && taskNum < tasks.taskCount() : "Task number should be valid";
-            return taskNum;
+            assert num > 0 && num <= items.itemCount() : "Item number should be valid";
+            return num;
         } catch (NumberFormatException e) {
-            throw new JoulesException(" Please enter a valid task number!");
+            throw new JoulesException(" Please enter a valid item number!");
         }
     }
 
@@ -123,5 +121,20 @@ public class Parser {
         } catch (DateTimeParseException e) {
             throw new JoulesException(" Invalid date format or value, use yyyy-MM-dd ");
         }
+    }
+
+    public static String[] parseContact(String input) throws JoulesException {
+        String[] split = input.split(" ");
+        if (split.length == 1 || split[1].trim().isEmpty()) {
+            throw new JoulesException(" Please add a contact name!");
+        }
+        if (split.length == 2 || split[2].trim().isEmpty()) {
+            throw new JoulesException(" Please add a contact number!");
+        }
+        String contact = split[2].trim();
+        if (!contact.matches("^\\+[0-9]{8,15}$")) {
+            throw new JoulesException( "Please ensure your number is in the format +<country code><number>");
+        }
+        return new String[] { split[1].trim(), contact };
     }
 }
