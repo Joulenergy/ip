@@ -1,5 +1,7 @@
 package joules;
 
+import joules.contact.Contact;
+import joules.contact.ContactList;
 import joules.task.Task;
 import joules.task.TaskList;
 
@@ -56,7 +58,7 @@ public class Ui {
      */
     public String getAllTasksMessage(TaskList tasks) {
         return " You got this! These are your tasks:\n"
-                + tasks.getTaskListString();
+                + tasks.getListString();
     }
 
     /**
@@ -123,5 +125,26 @@ public class Ui {
      */
     public String getErrorMessage(String msg) {
         return " I'm sorry, something went wrong X.X\n" + msg;
+    }
+
+    public String unknownCommandMessage() {
+        return " I do not understand your command ;<";
+    }
+
+    public String getAddedContactMessage(Contact c) {
+        return " Added this contact:\n    " + c;
+    }
+
+    public String getAllContactsMessage(ContactList contacts) {
+        return " Here are your contacts:\n"
+                + contacts.getListString();
+    }
+
+    public String getMatchingContactsMessage(String keyword, ContactList contacts) {
+        return " I have found these matching contacts:\n" + contacts.getMatchingContactListString(keyword);
+    }
+
+    public String getDeletedContactMessage(Contact c) {
+        return " Okay, I've deleted this contact:\n   " + c;
     }
 }

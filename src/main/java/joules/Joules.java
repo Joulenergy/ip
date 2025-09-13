@@ -3,6 +3,8 @@ package joules;
 import java.time.LocalDate;
 import java.util.Set;
 
+import joules.contact.Contact;
+import joules.contact.ContactList;
 import joules.task.Deadline;
 import joules.task.Event;
 import joules.task.Task;
@@ -25,14 +27,18 @@ public class Joules {
     private static final Ui UI = new Ui();
 
     /** List of tasks representing the user's task history */
-    private static final TaskList tasks = new TaskList(DEFAULT_CAPACITY);
+    private static final TaskList TASKS = new TaskList(DEFAULT_CAPACITY);
+
+    /** List of contacts the user has saved */
+    private static final ContactList CONTACTS = new ContactList(DEFAULT_CAPACITY);
 
     /**
      * Constructs the Joules chatbot
      */
     public Joules() {
         // Load input
-        Store.loadTasks(tasks);
+        Store.loadTasks(TASKS);
+        Store.loadContacts(CONTACTS);
     }
 
     /**
@@ -51,26 +57,47 @@ public class Joules {
             if (input.equals("bye")) {
                 return UI.getGoodbyeMessage();
             } else if (input.equals("list")) {
-                return UI.getAllTasksMessage(tasks);
-            } else if (commands[0].equals("find")) {
+                return UI.getAllTasksMessage(TASKS);
+            } else if (input.equals("contacts")) {
+                return UI.getAllContactsMessage(CONTACTS);
+            } else if (Set.of("find", "findc").contains(commands[0])) {
                 String keyword = Parser.parseFind(input);
-                assert keyword != "" : "keyword should not be empty";
-                return UI.getMatchingTasksMessage(keyword, tasks);
+                return getFindResults(keyword, commands);
             } else if (Set.of("mark", "unmark", "delete").contains(commands[0])) {
-                int taskNum = Parser.parseTaskNum(input, tasks);
+                int taskNum = Parser.parseNumAfterCommand(input, TASKS);
                 return executeChangeAndReturnMessage(taskNum, commands);
+            } else if (commands[0].equals("deletec")) {
+                int contactNum = Parser.parseNumAfterCommand(input, CONTACTS);
+                Contact c = CONTACTS.get(contactNum);
+                CONTACTS.remove(contactNum);
+                Store.saveAllContacts(CONTACTS);
+                return UI.getDeletedContactMessage(c);
             } else if (Set.of("todo", "deadline", "event").contains(commands[0])) {
                 Task t = createTask(input, commands);
-                return UI.getAddedTaskMessage(t, tasks.taskCount());
+                return UI.getAddedTaskMessage(t, TASKS.itemCount());
+            } else if (commands[0].equals("addc")) {
+                Contact c = createContact(input);
+                return UI.getAddedContactMessage(c);
             } else {
-                throw new JoulesException(" I do not understand your command ;<");
+                throw new JoulesException(UI.unknownCommandMessage());
             }
         } catch (JoulesException e) {
             return UI.getErrorMessage(e.getMessage());
         }
     }
 
-
+    private static String getFindResults(String keyword, String[] commands) throws JoulesException {
+        assert keyword != "" : "keyword should not be empty";
+        switch (commands[0]) {
+        case "find":
+            return UI.getMatchingTasksMessage(keyword, TASKS);
+        case "findc":
+            return UI.getMatchingContactsMessage(keyword, CONTACTS);
+        default:
+            throw new JoulesException(UI.unknownCommandMessage());
+        }
+    }
+    
     /**
      * Executes modification command {@code mark} {@code unmark} or {@code delete}
      * on a task and returns the corresponding feedback message
@@ -84,7 +111,7 @@ public class Joules {
      * @throws JoulesException If the command is invalid or the task number is out of range.
      */
     private static String executeChangeAndReturnMessage(int taskNum, String[] commands) throws JoulesException {
-        Task task = tasks.getTask(taskNum);
+        Task task = TASKS.get(taskNum);
         String message;
         switch (commands[0]) {
         case "mark" -> {
@@ -96,12 +123,12 @@ public class Joules {
             message = UI.getUnmarkedTaskMessage(task);
         }
         case "delete" -> {
-            tasks.removeTask(taskNum);
+            TASKS.remove(taskNum);
             message = UI.getDeletedTaskMessage(task);
         }
-        default -> throw new JoulesException(" I do not understand your command ;<");
+        default -> throw new JoulesException(UI.unknownCommandMessage());
         }
-        Store.saveAll(tasks);
+        Store.saveAllTasks(TASKS);
         return message;
     }
 
@@ -138,11 +165,19 @@ public class Joules {
             String[] event = Parser.parseEvent(input);
             t = new Event(event[0], LocalDate.parse(event[1]), LocalDate.parse(event[2]));
         }
-        default -> throw new JoulesException(" I do not understand your command ;<");
+        default -> throw new JoulesException(UI.unknownCommandMessage());
         }
-        tasks.addTask(t);
+        TASKS.add(t);
         t.store();
         return t;
+    }
+
+    public static Contact createContact(String input) throws JoulesException {
+        String[] contactInfo = Parser.parseContact(input);
+        Contact c = new Contact(contactInfo[0], contactInfo[1]);
+        CONTACTS.add(c);
+        c.store();
+        return c;
     }
 
     public String welcome() {

@@ -4,8 +4,11 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.Scanner;
 
+import joules.contact.Contact;
+import joules.contact.ContactList;
 import joules.task.Deadline;
 import joules.task.Event;
 import joules.task.Task;
@@ -21,7 +24,8 @@ import joules.task.Todo;
  */
 public class Store {
     /** Path to read stored tasks */
-    private static final String PATH = "/store/tasks.txt";
+    private static final String TASKS_PATH = "/store/tasks.txt";
+    private static final String CONTACTS_PATH = "/store/contacts.txt";
 
     /**
      * Loads tasks from the storage file into the given {@link TaskList}.
@@ -36,8 +40,8 @@ public class Store {
      * @param tasks The {@link TaskList} to populate with loaded tasks.
      */
     public static void loadTasks(TaskList tasks) {
-        assert PATH != null && !PATH.trim().isEmpty() : "Storage path must be defined";
-        File f = new File(Store.PATH);
+        assert TASKS_PATH != null && !TASKS_PATH.trim().isEmpty() : "Storage path must be defined";
+        File f = new File(Store.TASKS_PATH);
         try {
             if (!f.exists()) {
                 f.getParentFile().mkdir();
@@ -48,7 +52,7 @@ public class Store {
                 String line = s.nextLine();
                 String[] taskDetails = line.split(" \\| ");
                 Task t = null;
-                assert taskDetails[0] != null : "Task type should not be null";
+                assert !(taskDetails[0].isEmpty()) : "Task type should not be empty";
                 switch (taskDetails[0]) {
                 case "T":
                     t = new Todo(taskDetails[2]);
@@ -66,8 +70,30 @@ public class Store {
                     if (taskDetails[1].equals("1")) {
                         t.mark();
                     }
-                    tasks.addTask(t);
+                    tasks.add(t);
                 }
+            }
+        } catch (IOException | SecurityException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public static void loadContacts(ContactList contacts) {
+        assert CONTACTS_PATH != null && !CONTACTS_PATH.trim().isEmpty() : "Storage path must be defined";
+        File f = new File(Store.CONTACTS_PATH);
+        try {
+            if (!f.exists()) {
+                f.getParentFile().mkdir();
+                f.createNewFile();
+            }
+            Scanner s = new Scanner(f);
+            while (s.hasNext()) {
+                String line = s.nextLine();
+                String[] contactDetails = line.split(" \\| ");
+                if (contactDetails.length != 2) {
+                    System.out.println("Unable to load unknown contact type: " + line);
+                }
+                contacts.add(new Contact(contactDetails[0], contactDetails[1]));
             }
         } catch (IOException | SecurityException e) {
             System.out.println(e.getMessage());
@@ -80,10 +106,20 @@ public class Store {
      * @param textToAppend The string representation of the task to append.
      */
     public static void storeTask(String textToAppend) {
-        assert PATH != null && !PATH.trim().isEmpty() : "Storage path must be defined";
+        assert TASKS_PATH != null && !TASKS_PATH.trim().isEmpty() : "Storage path must be defined";
         try {
-            FileWriter fw = new FileWriter(Store.PATH, true);
+            FileWriter fw = new FileWriter(Store.TASKS_PATH, true);
             fw.write(textToAppend + "\n");
+            fw.close();
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public static void storeContact(String contactToAppend) {
+        try {
+            FileWriter fw = new FileWriter(Store.CONTACTS_PATH, true);
+            fw.write(contactToAppend + "\n");
             fw.close();
         } catch (IOException e) {
             System.out.println(e.getMessage());
@@ -99,14 +135,28 @@ public class Store {
      *
      * @param tasks The {@link TaskList} containing tasks to save.
      */
-    public static void saveAll(TaskList tasks) {
+    public static void saveAllTasks(TaskList tasks) {
         try {
             // clear the file
-            FileWriter fw = new FileWriter(Store.PATH);
+            FileWriter fw = new FileWriter(Store.TASKS_PATH);
             fw.close();
-            assert tasks.taskCount() >= 0 : "Task count should not be negative";
-            for (int i = 1; i <= tasks.taskCount(); i++) {
-                tasks.getTask(i).store();
+            assert tasks.itemCount() >= 0 : "Task count should not be negative";
+            for (int i = 1; i <= tasks.itemCount(); i++) {
+                tasks.get(i).store();
+            }
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public static void saveAllContacts(ContactList contacts) {
+        try {
+            // clear the file
+            FileWriter fw = new FileWriter(Store.CONTACTS_PATH);
+            fw.close();
+            assert contacts.itemCount() >= 0 : "Contact count should not be negative";
+            for (int i = 1; i <= contacts.itemCount(); i++) {
+                contacts.get(i).store();
             }
         } catch (IOException e) {
             System.out.println(e.getMessage());
