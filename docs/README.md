@@ -6,7 +6,7 @@ Joules is a personal assistant chatbot designed to help users manage tasks and c
 
 # 📘 Joules Features
 Joules helps you manage your tasks with simple, intuitive commands.
-> [!NOTE]
+> **Note:**
 > Words in <> are the parameters to be supplied by the user.
 > e.g. in `todo <description>`, `<description>` is a parameter which can be used as `todo math assignment`
 
@@ -57,7 +57,7 @@ Formats:
 
 Example: `mark 1`
 
-### 🗑️ Delete task: `delete`
+### ⌫ Delete task: `delete`
 Format: `delete <task number>`
 
 Deletes the specified task at position number in the task list
@@ -90,7 +90,7 @@ Example Output:
 2.sister: +6587654321
 ```
 
-### 🗑️ Delete contact: `deletec`
+### ⌫ Delete contact: `deletec`
 Format: `deletec <contact index>`
 
 Deletes the specified contact. Contact index is 1-indexed.

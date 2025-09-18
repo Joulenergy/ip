@@ -27,7 +27,7 @@ public class MainWindow extends AnchorPane {
     // userImage Source: https://www.flaticon.com/free-icons/success
     private Image userImage = new Image(this.getClass().getResourceAsStream("/images/User.png"));
     // joules Image Source: https://www.flaticon.com/free-icons/chatbot
-    private Image joulesImage = new Image(this.getClass().getResourceAsStream("/images/Joules.png"));
+    private Image joulesImage = new Image(this.getClass().getResourceAsStream("/Joules.png"));
 
     @FXML
     public void initialize() {
