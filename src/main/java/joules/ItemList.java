@@ -71,7 +71,7 @@ public abstract class ItemList<T> {
     public String getListString() {
         assert itemCount() >= 0 : "Item count should never be negative";
         if (itemCount() == 0) {
-            return "None found";
+            return " None found";
         }
         StringBuilder itemList = new StringBuilder();
         for (int i = 1; i <= itemCount(); i++) {
