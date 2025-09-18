@@ -19,6 +19,7 @@ public class Ui {
      * @return A formatted welcome message string.
      */
     public String getWelcomeMessage() {
+        // Credit: ASCII art generated with https://patorjk.com/software/taag/
         return " Hello! I'm Joules!\n"
                 + "     .-./`)     ,-----.      ___    _   .---.       .-''-.     .-'''-.  \n"
                 + "     \\ '_ .') .'  .-,  '.  .'   |  | |  | ,_|     .'_ _   \\   / _     \\ \n"

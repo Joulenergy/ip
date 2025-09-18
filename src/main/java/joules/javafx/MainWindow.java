@@ -24,7 +24,9 @@ public class MainWindow extends AnchorPane {
 
     private Joules joules;
 
+    // userImage Source: https://www.flaticon.com/free-icons/success
     private Image userImage = new Image(this.getClass().getResourceAsStream("/images/User.png"));
+    // joules Image Source: https://www.flaticon.com/free-icons/chatbot
     private Image joulesImage = new Image(this.getClass().getResourceAsStream("/images/Joules.png"));
 
     @FXML
