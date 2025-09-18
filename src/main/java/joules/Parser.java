@@ -2,6 +2,8 @@ package joules;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Parses user input commands in the Joules chatbot.
@@ -19,7 +21,7 @@ public class Parser {
      * @throws JoulesException If no keyword is provided after "find".
      */
     public static String parseFind(String input) throws JoulesException {
-        String[] split = input.split("find |findc ");
+        String[] split = input.split("find|findc");
         if (split.length == 1 || split[1].trim().isEmpty()) {
             throw new JoulesException(" Please add a keyword about what you want to find!");
         }
@@ -65,12 +67,13 @@ public class Parser {
      * @throws JoulesException If the description is missing or empty.
      */
     public static String parseTodo(String input) throws JoulesException {
-        String[] split = input.split("todo ");
+        String[] split = input.split("todo");
         if (split.length == 1 || split[1].trim().isEmpty()) {
             throw new JoulesException(" Please add a description about what the todo is!");
         }
-        assert !split[1].isEmpty() : "Todo description should not be empty after validation";
-        return split[1];
+        String description = split[1].trim();
+        assert !description.isEmpty() : "Todo description should not be empty after validation";
+        return description;
     }
 
     /**
@@ -81,13 +84,16 @@ public class Parser {
      * @throws JoulesException If the description or date is missing or invalid.
      */
     public static String[] parseDeadline(String input) throws JoulesException {
-        String[] split = input.split("deadline |/by");
-        if (split.length == 1 || split[1].trim().isEmpty()) {
-            throw new JoulesException(" Please add a description about what the deadline is!");
+        // Copilot AI was used to generate recommendations to improve string parsing.
+        Pattern pattern = Pattern.compile("deadline\\s+(.*?)\\s+/by\\s+(\\d{4}-\\d{2}-\\d{2})");
+        Matcher matcher = pattern.matcher(input);
+
+        if (!matcher.find()) {
+            throw new JoulesException(" Please ensure your input follows the format: "
+                    + "deadline <description> /by <yyyy-MM-dd>");
         }
-        if (split.length == 2 || split[2].trim().isEmpty()) {
-            throw new JoulesException(" Please add a deadline with /by!");
-        }
+
+        String[] split = input.split("deadline|/by");
         try {
             LocalDate date = LocalDate.parse(split[2].trim());
             assert date != null : "Parsed deadline date should not be null";
@@ -106,35 +112,40 @@ public class Parser {
      * @throws JoulesException If the description or dates are missing or invalid.
      */
     public static String[] parseEvent(String input) throws JoulesException {
-        String[] split = input.split("event |/from |/to ");
-        if (split.length == 1 || split[1].trim().isEmpty()) {
-            throw new JoulesException(" Please add a description about what the event is!");
+        Pattern pattern = Pattern.compile("event\\s+(.*?)\\s+/from\\s+(\\d{4}-\\d{2}-\\d{2})\\s+"
+                + "/to\\s+(\\d{4}-\\d{2}-\\d{2})");
+        Matcher matcher = pattern.matcher(input);
+
+        if (!matcher.find()) {
+            throw new JoulesException(" Please ensure your input follows the format: "
+                    + "event <description> /from <yyyy-MM-dd> /to <yyyy-MM-dd>");
         }
-        if (split.length <= 3 || split[2].trim().isEmpty() || split[3].trim().isEmpty()) {
-            throw new JoulesException(" Please ensure you have a /from and /to date!");
-        }
+
+        String[] split = input.split("event|/from|/to");
         try {
             LocalDate fromDate = LocalDate.parse(split[2].trim());
-            LocalDate toDate = LocalDate.parse(split[3]);
+            LocalDate toDate = LocalDate.parse(split[3].trim());
             assert fromDate != null && toDate != null : "Parsed event dates should not be null";
-            return new String[] { split[1].trim(), split[2].trim(), split[3] };
+            return new String[] { split[1].trim(), split[2].trim(), split[3].trim() };
         } catch (DateTimeParseException e) {
             throw new JoulesException(" Invalid date format or value, use yyyy-MM-dd ");
         }
     }
 
     public static String[] parseContact(String input) throws JoulesException {
-        String[] split = input.split(" ");
-        if (split.length == 1 || split[1].trim().isEmpty()) {
+        Pattern pattern = Pattern.compile("addc\\s+(.*?)\\s+(\\+\\d{8,15})");
+        Matcher matcher = pattern.matcher(input);
+
+        if (!matcher.find()) {
+            throw new JoulesException(" Please ensure your input follows the format: "
+                    + "addc <name> +<country code><number>");
+        }
+
+        String name = matcher.group(1);
+        if (name.isEmpty()) {
             throw new JoulesException(" Please add a contact name!");
         }
-        if (split.length == 2 || split[2].trim().isEmpty()) {
-            throw new JoulesException(" Please add a contact number!");
-        }
-        String contact = split[2].trim();
-        if (!contact.matches("^\\+[0-9]{8,15}$")) {
-            throw new JoulesException( "Please ensure your number is in the format +<country code><number>");
-        }
-        return new String[] { split[1].trim(), contact };
+
+        return new String[] { name, matcher.group(2).trim() };
     }
 }

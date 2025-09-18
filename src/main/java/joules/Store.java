@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.Objects;
 import java.util.Scanner;
 
 import joules.contact.Contact;
@@ -66,12 +65,13 @@ public class Store {
                 default:
                     System.out.println("Unable to load unknown task type: " + line);
                 }
-                if (t != null) {
-                    if (taskDetails[1].equals("1")) {
-                        t.mark();
-                    }
-                    tasks.add(t);
+                if (t == null) {
+                    continue;
                 }
+                if (taskDetails[1].equals("1")) {
+                    t.mark();
+                }
+                tasks.add(t);
             }
         } catch (IOException | SecurityException e) {
             System.out.println(e.getMessage());
@@ -92,6 +92,7 @@ public class Store {
                 String[] contactDetails = line.split(" \\| ");
                 if (contactDetails.length != 2) {
                     System.out.println("Unable to load unknown contact type: " + line);
+                    continue;
                 }
                 contacts.add(new Contact(contactDetails[0], contactDetails[1]));
             }
