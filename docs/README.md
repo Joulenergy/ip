@@ -111,3 +111,6 @@ Tasks and Contacts are automatically saved locally and reloaded when you restart
 Format: `bye`
 
 Exits the chatbot gracefully.
+
+## Credit
+AI like ChatGPT and Copilot have been used to generate JavaDoc for some of the functions.

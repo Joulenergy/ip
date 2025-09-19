@@ -157,6 +157,13 @@ public class Parser {
         }
     }
 
+    /**
+     * Parses name and number of a contact from a user input command.
+     *
+     * @param input The full user input string. Format: {@code addc <name> +<country code><number>}.
+     * @return An array where the first element is the contact name and the second is the number.
+     * @throws JoulesException If the format is invalid or the name is missing.
+     */
     public static String[] parseContact(String input) throws JoulesException {
         Pattern pattern = Pattern.compile("addc\\s+(.*?)\\s+(\\+\\d{8,15})");
         Matcher matcher = pattern.matcher(input);

@@ -86,6 +86,23 @@ public class Joules {
         }
     }
 
+    /**
+     * Retrieves matching results for a given search keyword.
+     * <p>
+     * This method processes the {@code find} and {@code findc} commands:
+     * <ul>
+     *   <li>{@code find} – searches tasks for descriptions containing the keyword</li>
+     *   <li>{@code findc} – searches contacts for names or numbers containing the keyword</li>
+     * </ul>
+     * The results are formatted into a message via the {@link Ui}.
+     * </p>
+     *
+     * @param keyword The search term provided by the user; must not be empty.
+     * @param commands Split user input where the first element specifies
+     *                 the search target ({@code find} or {@code findc}).
+     * @return A formatted message listing all matching tasks or contacts.
+     * @throws JoulesException If the command is unsupported or invalid.
+     */
     private static String getFindResults(String keyword, String[] commands) throws JoulesException {
         assert keyword != "" : "keyword should not be empty";
         switch (commands[0]) {
@@ -97,7 +114,6 @@ public class Joules {
             throw new JoulesException(UI.unknownCommandMessage());
         }
     }
-    
     /**
      * Executes modification command {@code mark} {@code unmark} or {@code delete}
      * on a task and returns the corresponding feedback message
@@ -172,6 +188,19 @@ public class Joules {
         return t;
     }
 
+    /**
+     * Creates a new contact based on the user input.
+     * <p>
+     * This method parses the input string to extract the contact's
+     * name and phone number, constructs a new {@link Contact}, and
+     * adds it to the contact list. The updated list is then stored
+     * persistently.
+     * </p>
+     *
+     * @param input Full user input string containing the contact information.
+     * @return The contact that was created and stored.
+     * @throws JoulesException If the input format is invalid or missing required information.
+     */
     public static Contact createContact(String input) throws JoulesException {
         String[] contactInfo = Parser.parseContact(input);
         Contact c = new Contact(contactInfo[0], contactInfo[1]);
@@ -180,6 +209,14 @@ public class Joules {
         return c;
     }
 
+    /**
+     * Returns the welcome message displayed when the chatbot starts.
+     * <p>
+     * This message is shown to greet the user upon initialization of the chatbot.
+     * </p>
+     *
+     * @return A welcome message string.
+     */
     public String welcome() {
         return UI.getWelcomeMessage();
     }

@@ -22,10 +22,12 @@ import joules.task.Todo;
  * </p>
  */
 public class Store {
+    /** Path to store joules data */
     private static final String BASE_DIR = System.getProperty("user.home") + File.separator + "joules_data";
     /** Path to read stored tasks */
-    private static final String TASKS_PATH = BASE_DIR + File.separator + "tasks.txt";
-    private static final String CONTACTS_PATH = BASE_DIR + File.separator + "contacts.txt";
+    private static final String PATH_TASKS = BASE_DIR + File.separator + "tasks.txt";
+    /** Path to read stored contacts */
+    private static final String PATH_CONTACTS = BASE_DIR + File.separator + "contacts.txt";
 
     /**
      * Loads tasks from the storage file into the given {@link TaskList}.
@@ -40,8 +42,8 @@ public class Store {
      * @param tasks The {@link TaskList} to populate with loaded tasks.
      */
     public static void loadTasks(TaskList tasks) {
-        assert TASKS_PATH != null && !TASKS_PATH.trim().isEmpty() : "Storage path must be defined";
-        File f = new File(Store.TASKS_PATH);
+        assert PATH_TASKS != null && !PATH_TASKS.trim().isEmpty() : "Storage path must be defined";
+        File f = new File(Store.PATH_TASKS);
         try {
             if (!f.exists()) {
                 f.getParentFile().mkdir();
@@ -79,9 +81,21 @@ public class Store {
         }
     }
 
+    /**
+     * Loads contacts from the storage file into the given {@link ContactList}.
+     * <p>
+     * If the file does not exist, it will be created automatically.
+     * Each line in the file represents a contact with the format:
+     * <pre>
+     * name | contact
+     * </pre>
+     * </p>
+     *
+     * @param contacts The {@link ContactList} to populate with loaded contacts.
+     */
     public static void loadContacts(ContactList contacts) {
-        assert CONTACTS_PATH != null && !CONTACTS_PATH.trim().isEmpty() : "Storage path must be defined";
-        File f = new File(Store.CONTACTS_PATH);
+        assert PATH_CONTACTS != null && !PATH_CONTACTS.trim().isEmpty() : "Storage path must be defined";
+        File f = new File(Store.PATH_CONTACTS);
         try {
             if (!f.exists()) {
                 f.getParentFile().mkdir();
@@ -108,9 +122,9 @@ public class Store {
      * @param textToAppend The string representation of the task to append.
      */
     public static void storeTask(String textToAppend) {
-        assert TASKS_PATH != null && !TASKS_PATH.trim().isEmpty() : "Storage path must be defined";
+        assert PATH_TASKS != null && !PATH_TASKS.trim().isEmpty() : "Storage path must be defined";
         try {
-            FileWriter fw = new FileWriter(Store.TASKS_PATH, true);
+            FileWriter fw = new FileWriter(Store.PATH_TASKS, true);
             fw.write(textToAppend + "\n");
             fw.close();
         } catch (IOException e) {
@@ -118,9 +132,20 @@ public class Store {
         }
     }
 
+    /**
+     * Appends a single contact string to the storage file.
+     * <p>
+     * The contact is expected to be in the format:
+     * <pre>
+     * name | contact
+     * </pre>
+     * </p>
+     *
+     * @param contactToAppend The string representation of the contact to append.
+     */
     public static void storeContact(String contactToAppend) {
         try {
-            FileWriter fw = new FileWriter(Store.CONTACTS_PATH, true);
+            FileWriter fw = new FileWriter(Store.PATH_CONTACTS, true);
             fw.write(contactToAppend + "\n");
             fw.close();
         } catch (IOException e) {
@@ -140,7 +165,7 @@ public class Store {
     public static void saveAllTasks(TaskList tasks) {
         try {
             // clear the file
-            FileWriter fw = new FileWriter(Store.TASKS_PATH);
+            FileWriter fw = new FileWriter(Store.PATH_TASKS);
             fw.close();
             assert tasks.itemCount() >= 0 : "Task count should not be negative";
             for (int i = 1; i <= tasks.itemCount(); i++) {
@@ -151,10 +176,19 @@ public class Store {
         }
     }
 
+    /**
+     * Saves all contacts in the given {@link ContactList} to the storage file.
+     * <p>
+     * This method overwrites the file contents and writes all contacts
+     * in their current state.
+     * </p>
+     *
+     * @param contacts The {@link ContactList} containing contacts to save.
+     */
     public static void saveAllContacts(ContactList contacts) {
         try {
             // clear the file
-            FileWriter fw = new FileWriter(Store.CONTACTS_PATH);
+            FileWriter fw = new FileWriter(Store.PATH_CONTACTS);
             fw.close();
             assert contacts.itemCount() >= 0 : "Contact count should not be negative";
             for (int i = 1; i <= contacts.itemCount(); i++) {
