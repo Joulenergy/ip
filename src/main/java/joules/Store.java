@@ -22,9 +22,10 @@ import joules.task.Todo;
  * </p>
  */
 public class Store {
+    private static final String BASE_DIR = System.getProperty("user.home") + File.separator + "joules_data";
     /** Path to read stored tasks */
-    private static final String TASKS_PATH = "/store/tasks.txt";
-    private static final String CONTACTS_PATH = "/store/contacts.txt";
+    private static final String TASKS_PATH = BASE_DIR + File.separator + "tasks.txt";
+    private static final String CONTACTS_PATH = BASE_DIR + File.separator + "contacts.txt";
 
     /**
      * Loads tasks from the storage file into the given {@link TaskList}.
